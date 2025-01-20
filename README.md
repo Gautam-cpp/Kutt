@@ -1,23 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Define the content for the README.md file
+readme_content = """
+# Kutt - URL Shortener
 
-## Getting Started
+Kutt is a modern URL shortening web application built with **Next.js**, **Prisma**, and **TypeScript**. This project provides users with a simple way to shorten URLs, track their usage, and view their link history in an interactive dashboard.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 📌 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **JWT Authentication**: Secure login and session management using JSON Web Tokens.
+- **URL Shortening**: Convert long URLs into short, shareable links.
+- **Dashboard**: 
+  - View the history of shortened URLs.
+  - See original URLs, shortened links, creation dates, and view counts.
+- **Responsive Design**: Optimized for both desktop and mobile devices.
+- **Rate Limiting**: Enforces a limit on the number of links and views.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Tech Stack
 
+- **Frontend**: Next.js, React, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes, Prisma ORM
+- **Database**: PostgreSQL
+- **Authentication**: JSON Web Tokens (JWT)
+- **Hosting**: Vercel (or any compatible hosting service)
 
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v18 or later)
+- PostgreSQL (v14 or later)
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/gautam-cpp/kutt.git
+   cd kutt
