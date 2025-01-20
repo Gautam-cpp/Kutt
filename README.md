@@ -1,5 +1,4 @@
-# Define the content for the README.md file
-readme_content = """
+
 # Kutt - URL Shortener
 
 Kutt is a modern URL shortening web application built with **Next.js**, **Prisma**, and **TypeScript**. This project provides users with a simple way to shorten URLs, track their usage, and view their link history in an interactive dashboard.
