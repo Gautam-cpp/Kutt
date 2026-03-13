@@ -15,19 +15,16 @@ async function cleanupExpiredUrls() {
             // Find expired URLs
             const expiredUrls = await prisma.url.findMany({
                 where: {
-                    expiresAt: {
-                        lte: now,
-                    },
+                    expiresAt: { lte: now },
+                    userId: null,
                 },
             });
 
             if (expiredUrls.length > 0) {
-                // Delete from database
                 const result = await prisma.url.deleteMany({
                     where: {
-                        expiresAt: {
-                            lte: now,
-                        },
+                        expiresAt: { lte: now },
+                        userId: null,
                     },
                 });
 

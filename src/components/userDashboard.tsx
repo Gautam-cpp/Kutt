@@ -41,7 +41,7 @@ export function UserDashboard() {
     if (cached) {
       setHistory(cached.data);
       setLoading(false);
-      if (cached.stale) fetchHistory(true);
+      fetchHistory(true);
     } else {
       fetchHistory(false);
     }

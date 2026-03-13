@@ -28,7 +28,13 @@ export async function POST(req: NextRequest) {
     }
 
     const { url, customAlias, expiry } = parseResult.data;
-    const expiryDate = expiry ? new Date(expiry) : undefined;
+
+    const now = Date.now();
+    const expiryDate = expiry
+      ? new Date(expiry)
+      : userId
+        ? new Date(now + 24 * 60 * 60 * 1000)
+        : new Date(now + 3 * 60 * 60 * 1000);
 
     if (expiryDate && expiryDate <= new Date()) {
       return NextResponse.json(

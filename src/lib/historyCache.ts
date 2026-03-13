@@ -11,7 +11,7 @@ interface CacheEntry {
   fetchedAt: number;
 }
 
-export const CACHE_TTL_MS = 600_000; // 10 minutes
+export const CACHE_TTL_MS = 120_000; // 2 minutes
 
 export function getCacheKey(userId: string) {
   return `kutt_history_${userId}`;
