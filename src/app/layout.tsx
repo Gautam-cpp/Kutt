@@ -24,8 +24,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Fetch session server-side so the client SessionProvider is pre-seeded.
-  // This eliminates the GET /api/auth/session call that useSession() normally makes.
   const session = await getServerSession(authOptions);
 
   return (

@@ -45,7 +45,6 @@ const features = [
 export function DemoDashboard() {
     return (
         <>
-            {/* Hero split */}
             <section className="w-full max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center gap-10 py-20">
                 <div className="flex flex-col items-center md:items-start text-center md:text-left gap-5 flex-1">
                     <h2 className="text-2xl sm:text-3xl font-bold text-[var(--text)] leading-snug">
@@ -56,10 +55,7 @@ export function DemoDashboard() {
                     <p className="text-[var(--text-muted)] text-sm sm:text-base max-w-sm">
                         Sign up for free and get access to link management, analytics and more.
                     </p>
-                    <Link
-                        href="/login"
-                        className="btn-brand no-underline"
-                    >
+                    <Link href="/login" className="btn-brand no-underline">
                         Login / Sign up
                     </Link>
                 </div>
@@ -74,7 +70,6 @@ export function DemoDashboard() {
                 </div>
             </section>
 
-            {/* Features */}
             <section className="w-full bg-[hsl(230,15%,94%)] py-20 px-4 sm:px-6">
                 <div className="max-w-6xl mx-auto flex flex-col items-center">
                     <p className="text-xs font-semibold uppercase tracking-widest text-brand mb-2">Why Kutt?</p>

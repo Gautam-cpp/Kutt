@@ -5,7 +5,7 @@ import redis from '../lib/redis';
 const CLEANUP_INTERVAL_MS = 1000 * 60 * 60; // Run every hour
 
 async function cleanupExpiredUrls() {
-    console.log('🧹 Starting Expiry Cleanup Worker...');
+    console.log('Starting Expiry Cleanup Worker...');
 
     while (true) {
         try {
@@ -31,7 +31,7 @@ async function cleanupExpiredUrls() {
                     },
                 });
 
-                console.log(`🗑️ Deleted ${result.count} expired URLs from DB.`);
+                console.log(`Deleted ${result.count} expired URLs from DB.`);
 
                 // Invalidate from cache
                 for (const url of expiredUrls) {
@@ -40,10 +40,10 @@ async function cleanupExpiredUrls() {
                     }
                 }
             } else {
-                console.log('✅ No expired URLs found.');
+                console.log('No expired URLs found.');
             }
         } catch (error) {
-            console.error('❌ Error in Expiry Worker:', error);
+            console.error('Error in Expiry Worker:', error);
         }
 
         // Sleep till next interval

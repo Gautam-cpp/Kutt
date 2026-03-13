@@ -2,9 +2,6 @@ import prisma from '@/lib';
 import redis from '@/lib/redis';
 
 export class RedirectService {
-    /**
-     * Retrieves original URL for a short code and records analytics
-     */
     static async getUrlAndRecordClick(shortCode: string, clickData: {
         ipAddress?: string;
         referrer?: string;
@@ -13,7 +10,6 @@ export class RedirectService {
     }): Promise<string | null> {
         const cacheKey = `url:${shortCode}`;
 
-        // 1. Check Redis Cache
         const cachedData = await redis.get(cacheKey);
         let originalUrl: string | null = null;
         let isExpired = false;
@@ -27,7 +23,6 @@ export class RedirectService {
                 originalUrl = parsed.longUrl;
             }
         } else {
-            // Cache MISS -> Query Database
             const urlRecord = await prisma.url.findUnique({
                 where: { shortCode },
             });
@@ -38,7 +33,6 @@ export class RedirectService {
                 } else {
                     originalUrl = urlRecord.longUrl;
 
-                    // Store result in Redis
                     const CACHE_TTL = parseInt(process.env.CACHE_TTL || '3600', 10);
                     await redis.set(
                         cacheKey,
@@ -57,8 +51,6 @@ export class RedirectService {
             return null;
         }
 
-        // 3. Record Analytics
-        // We can push to a Redis List for background processing to avoid blocking redirect
         const clickRecord = {
             shortCode,
             timestamp: new Date().toISOString(),

@@ -41,7 +41,6 @@ export function DashboardInput() {
       if (response.ok) {
         setShortUrl(data.shortUrl);
         setTimeout(() => setShortUrl(''), 30000);
-        // Prepend new link to localStorage cache so dashboard updates instantly
         if (isAuth && userId && data.id) {
           prependToCache(userId, {
             id: data.id,
@@ -67,13 +66,12 @@ export function DashboardInput() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      /* fallback: do nothing */
+      /* fallback */
     }
   };
 
   return (
     <section className="w-full flex flex-col items-center px-4">
-      {/* Hero gradient strip */}
       <div className="w-full bg-gradient-to-b from-[var(--brand-light)] via-[#f4f6f9] to-transparent pb-12 pt-16 flex flex-col items-center">
         <div className="max-w-2xl w-full flex flex-col items-center text-center">
           <h1 className="text-4xl sm:text-5xl font-bold text-[var(--text)] mb-3 leading-tight tracking-tight">
@@ -87,7 +85,6 @@ export function DashboardInput() {
             Free, fast and privacy-first link shortening. No trackers. No spam.
           </p>
 
-          {/* Input form */}
           <form onSubmit={handleSubmit} className="w-full relative">
             <div className="relative w-full">
               <input
@@ -121,7 +118,6 @@ export function DashboardInput() {
             )}
           </form>
 
-          {/* Short URL result */}
           {shortUrl && (
             <div className="w-full mt-5 card p-4 flex items-center justify-between gap-3 animate-fade-up">
               <div className="flex flex-col items-start overflow-hidden">
@@ -158,7 +154,6 @@ export function DashboardInput() {
             </div>
           )}
 
-          {/* Demo alert */}
           {shortUrl && !isAuth && (
             <div className="w-full mt-3">
               <DemoAlert />

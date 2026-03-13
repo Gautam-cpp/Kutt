@@ -52,17 +52,14 @@ export function clearCache(userId: string) {
   }
 }
 
-/** Prepend a new record to the existing cache without blowing away fetchedAt */
 export function prependToCache(userId: string, record: UrlRecord) {
   try {
     const raw = localStorage.getItem(getCacheKey(userId));
     if (!raw) {
-      // No cache yet — create one seeded with this record
       writeCache(userId, [record]);
       return;
     }
     const entry: CacheEntry = JSON.parse(raw);
-    // Avoid duplicates (e.g. React StrictMode double-invoke)
     const already = entry.data.some((r) => r.id === record.id);
     if (!already) {
       entry.data = [record, ...entry.data];

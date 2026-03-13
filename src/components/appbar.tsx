@@ -26,13 +26,11 @@ export function Appbar() {
     return (
         <header className="sticky top-0 z-50 w-full glass border-b border-[var(--border)]">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-                {/* Logo */}
                 <Link href="/" className="flex items-center gap-2 font-bold text-[1.15rem] text-[var(--text)] hover:text-brand transition-colors no-underline shrink-0">
                     <Image src="/logo.svg" alt="Kutt logo" width={18} height={24} className="aspect-auto" />
                     Kutt
                 </Link>
 
-                {/* Desktop nav */}
                 <nav className="hidden md:flex items-center gap-6 text-sm text-[var(--text-muted)]">
                     <a href="https://github.com/gautam-cpp/kutt" target="_blank" rel="noopener noreferrer"
                         className="hover:text-brand transition-colors no-underline">
@@ -46,7 +44,6 @@ export function Appbar() {
                     </a>
                 </nav>
 
-                {/* Desktop auth button */}
                 <div className="hidden md:flex items-center min-w-[120px] justify-end">
                     {isLoading ? (
                         <span className="inline-block w-5 h-5 border-2 border-[var(--text-muted)] border-t-transparent rounded-full animate-spin-slow" />
@@ -65,7 +62,6 @@ export function Appbar() {
                     )}
                 </div>
 
-                {/* Mobile hamburger */}
                 <button
                     className="md:hidden flex flex-col gap-[5px] p-2 cursor-pointer border-none bg-transparent"
                     onClick={() => setMenuOpen((o) => !o)}
@@ -78,7 +74,6 @@ export function Appbar() {
                 </button>
             </div>
 
-            {/* Mobile drawer */}
             {menuOpen && (
                 <div className="md:hidden border-t border-[var(--border)] bg-white animate-fade-up">
                     <nav className="flex flex-col px-4 py-4 gap-3 text-sm text-[var(--text-muted)]">

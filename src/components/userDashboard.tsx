@@ -1,8 +1,7 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
-import { type UrlRecord, readCache, writeCache, clearCache } from '@/lib/historyCache';
-
+import { type UrlRecord, readCache, writeCache } from '@/lib/historyCache';
 
 export function UserDashboard() {
   const { data: session } = useSession();
@@ -11,7 +10,7 @@ export function UserDashboard() {
 
   const [history, setHistory] = useState<UrlRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [syncing, setSyncing] = useState(false); // background refresh indicator
+  const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
 
@@ -38,22 +37,17 @@ export function UserDashboard() {
 
   useEffect(() => {
     if (!userId) return;
-
-    // 1. Try loading from cache immediately (no spinner)
     const cached = readCache(userId);
     if (cached) {
       setHistory(cached.data);
       setLoading(false);
-      // 2. Only background-sync if cache is getting stale (older than half TTL)
       if (cached.stale) fetchHistory(true);
     } else {
-      // 3. No cache or expired — full fetch with spinner
       fetchHistory(false);
     }
   }, [userId, fetchHistory]);
 
   const handleDelete = async (id: string) => {
-    // Optimistically remove from UI & cache
     const updated = history.filter((h) => h.id !== id);
     setHistory(updated);
     if (userId) writeCache(userId, updated);
@@ -64,7 +58,6 @@ export function UserDashboard() {
         credentials: 'include',
       });
       if (!res.ok) {
-        // Revert on failure
         setHistory(history);
         if (userId) writeCache(userId, history);
       }
@@ -86,7 +79,6 @@ export function UserDashboard() {
 
   return (
     <section className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-12">
-      {/* Stats bar */}
       <div className="card mb-6 overflow-x-auto">
         <div className="flex min-w-[480px] sm:min-w-0 items-center divide-x divide-[var(--border)]">
           <div className="flex-1 px-5 py-4">
@@ -123,7 +115,6 @@ export function UserDashboard() {
         )}
       </div>
 
-      {/* Search */}
       <div className="relative mb-4 max-w-sm">
         <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
@@ -137,7 +128,6 @@ export function UserDashboard() {
         />
       </div>
 
-      {/* Desktop table */}
       <div className="card overflow-hidden hidden sm:block">
         <table className="w-full text-sm">
           <thead className="bg-[#f8fafc] border-b border-[var(--border)]">
@@ -196,7 +186,6 @@ export function UserDashboard() {
         </table>
       </div>
 
-      {/* Mobile card list */}
       <div className="flex flex-col gap-3 sm:hidden">
         {loading ? (
           <div className="card p-6 text-center text-[var(--text-muted)]">

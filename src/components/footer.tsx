@@ -7,7 +7,6 @@ export function Footer() {
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 mb-8">
 
-                    {/* Brand */}
                     <div className="col-span-2 sm:col-span-1">
                         <Link href="/" className="flex items-center gap-2.5 font-bold text-[var(--text)] no-underline mb-3 group w-fit">
                             <div className="w-6 h-6 rounded-md bg-[var(--brand)] flex items-center justify-center shadow-[2px_2px_0_var(--brand-deep)] group-hover:rotate-6 transition-transform duration-300">
@@ -20,7 +19,6 @@ export function Footer() {
                         </p>
                     </div>
 
-                    {/* Product */}
                     <div>
                         <h4
                             className="text-xs font-bold uppercase tracking-widest text-[var(--text)] mb-4"
@@ -35,7 +33,6 @@ export function Footer() {
                         </ul>
                     </div>
 
-                    {/* Connect */}
                     <div>
                         <h4
                             className="text-xs font-bold uppercase tracking-widest text-[var(--text)] mb-4"
@@ -66,9 +63,8 @@ export function Footer() {
                     </div>
                 </div>
 
-                {/* Bottom bar */}
                 <div className="border-t border-[var(--border)] pt-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-[var(--text-muted)]">
-                    <span>Made with <span className="text-red-500">♥</span> by Gautam Prajapat</span>
+                    <span>Made with love by Gautam Prajapat</span>
                     <span>© {new Date().getFullYear()} Kutt. All rights reserved.</span>
                 </div>
             </div>

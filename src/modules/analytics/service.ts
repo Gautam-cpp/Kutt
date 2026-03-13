@@ -1,9 +1,6 @@
 import prisma from '@/lib';
 
 export class AnalyticsService {
-    /**
-     * Aggregates click stats for a given short code
-     */
     static async getAnalytics(shortCode: string) {
         const urlRecord = await prisma.url.findUnique({
             where: { shortCode },
@@ -18,7 +15,6 @@ export class AnalyticsService {
             return null;
         }
 
-        // Get group by aggregations for referrers, countries, and devices (from userAgent roughly if parsed, we will just group by userAgent for simplicity since a full UA parser like useragent is not installed)
         const [referrers, countries, userAgents, dailyClicks] = await Promise.all([
             prisma.clickAnalytics.groupBy({
                 by: ['referrer'],
@@ -38,9 +34,6 @@ export class AnalyticsService {
                 _count: { id: true },
                 orderBy: { _count: { id: 'desc' } }
             }),
-            // Timestamps approximation: we will just return raw timestamps or optionally grouping by day.
-            // Prisma currently doesn't directly support grouping by DATE(timestamp) natively in all dialects via `groupBy`,
-            // so we can fallback to fetching raw or using raw query.
             prisma.$queryRaw<{ day: Date; count: bigint }[]>`
         SELECT DATE_TRUNC('day', "timestamp") as day, COUNT(*) as count
         FROM "ClickAnalytics"
