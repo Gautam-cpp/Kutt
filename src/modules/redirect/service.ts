@@ -1,0 +1,71 @@
+import prisma from '@/lib';
+import redis from '@/lib/redis';
+
+export class RedirectService {
+    /**
+     * Retrieves original URL for a short code and records analytics
+     */
+    static async getUrlAndRecordClick(shortCode: string, clickData: {
+        ipAddress?: string;
+        referrer?: string;
+        userAgent?: string;
+        country?: string; // e.g. from CF-IPCountry header
+    }): Promise<string | null> {
+        const cacheKey = `url:${shortCode}`;
+
+        // 1. Check Redis Cache
+        const cachedData = await redis.get(cacheKey);
+        let originalUrl: string | null = null;
+        let isExpired = false;
+
+        if (cachedData) {
+            // Cache HIT
+            const parsed = JSON.parse(cachedData);
+            if (parsed.expiresAt && new Date(parsed.expiresAt) <= new Date()) {
+                isExpired = true;
+            } else {
+                originalUrl = parsed.longUrl;
+            }
+        } else {
+            // Cache MISS -> Query Database
+            const urlRecord = await prisma.url.findUnique({
+                where: { shortCode },
+            });
+
+            if (urlRecord) {
+                if (urlRecord.expiresAt && urlRecord.expiresAt <= new Date()) {
+                    isExpired = true;
+                } else {
+                    originalUrl = urlRecord.longUrl;
+
+                    // Store result in Redis
+                    const CACHE_TTL = parseInt(process.env.CACHE_TTL || '3600', 10);
+                    await redis.set(
+                        cacheKey,
+                        JSON.stringify({
+                            longUrl: urlRecord.longUrl,
+                            expiresAt: urlRecord.expiresAt ? urlRecord.expiresAt.toISOString() : null,
+                        }),
+                        'EX',
+                        CACHE_TTL
+                    );
+                }
+            }
+        }
+
+        if (isExpired || !originalUrl) {
+            return null;
+        }
+
+        // 3. Record Analytics
+        // We can push to a Redis List for background processing to avoid blocking redirect
+        const clickRecord = {
+            shortCode,
+            timestamp: new Date().toISOString(),
+            ...clickData,
+        };
+        await redis.lpush('analytics_queue', JSON.stringify(clickRecord));
+
+        return originalUrl;
+    }
+}

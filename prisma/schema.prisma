@@ -1,30 +1,82 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             Int
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       Int
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id       String    @id @default(uuid())
-  email    String    @unique
-  password String
-  shortenedUrls ShortenedUrl[]
-  
+  id            Int       @id @default(autoincrement())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  urls          Url[]
 }
 
-model ShortenedUrl {
-  id         String   @id @default(uuid())
-  longUrl    String   
-  shortUrl   String   
-  userId     String   
-  user       User     @relation(fields: [userId], references: [id]) 
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Url {
+  id          Int       @id @default(autoincrement())
+  shortCode   String?   @unique
+  longUrl     String
+  customAlias String?   @unique
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime?
+  
+  userId      Int?      // Add this to store the User's ID (optional if guests can shorten URLs)
+  user        User?     @relation(fields: [userId], references: [id]) // The relation
+
+  clicks      ClickAnalytics[]
+}
+
+model ClickAnalytics {
+  id        Int      @id @default(autoincrement())
+  urlId     Int
+  url       Url      @relation(fields: [urlId], references: [id], onDelete: Cascade)
+  shortCode String
+  timestamp DateTime @default(now())
+  ipAddress String?
+  referrer  String?
+  userAgent String?
+  country   String?
+
+  @@index([shortCode])
+  @@index([urlId])
 }
