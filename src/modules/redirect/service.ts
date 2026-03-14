@@ -1,5 +1,6 @@
 import prisma from '@/lib';
 import redis from '@/lib/redis';
+import { decode } from '@/lib/shortcode';
 
 export class RedirectService {
     static async getUrlAndRecordClick(shortCode: string, clickData: {
@@ -23,8 +24,9 @@ export class RedirectService {
                 originalUrl = parsed.longUrl;
             }
         } else {
+            const decodedUrl = decode(shortCode);
             const urlRecord = await prisma.url.findUnique({
-                where: { shortCode },
+                where: { id: decodedUrl },
             });
 
             if (urlRecord) {

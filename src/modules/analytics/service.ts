@@ -3,12 +3,7 @@ import prisma from '@/lib';
 export class AnalyticsService {
     static async getAnalytics(shortCode: string) {
         const urlRecord = await prisma.url.findUnique({
-            where: { shortCode },
-            include: {
-                _count: {
-                    select: { clicks: true }
-                }
-            }
+            where: { shortCode }
         });
 
         if (!urlRecord) {
@@ -44,7 +39,7 @@ export class AnalyticsService {
         ]);
 
         return {
-            clickCount: urlRecord._count.clicks,
+            clickCount: urlRecord.clickCount,
             referrers: referrers.map((r: { referrer: string | null; _count: { id: number } }) => ({ referrer: r.referrer || 'Direct', count: r._count.id })),
             countries: countries.map((c: { country: string | null; _count: { id: number } }) => ({ country: c.country || 'Unknown', count: c._count.id })),
             devices: userAgents.map((ua: { userAgent: string | null; _count: { id: number } }) => ({ userAgent: ua.userAgent || 'Unknown', count: ua._count.id })),

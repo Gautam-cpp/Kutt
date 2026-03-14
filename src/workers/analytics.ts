@@ -19,17 +19,23 @@ async function processAnalyticsTokens() {
                 });
 
                 if (urlRecord) {
-                    await prisma.clickAnalytics.create({
-                        data: {
-                            urlId: urlRecord.id,
-                            shortCode: entry.shortCode,
-                            timestamp: new Date(entry.timestamp),
-                            ipAddress: entry.ipAddress,
-                            referrer: entry.referrer,
-                            userAgent: entry.userAgent,
-                            country: entry.country,
-                        },
-                    });
+                    await prisma.$transaction([
+                        prisma.clickAnalytics.create({
+                            data: {
+                                urlId: urlRecord.id,
+                                shortCode: entry.shortCode,
+                                timestamp: new Date(entry.timestamp),
+                                ipAddress: entry.ipAddress,
+                                referrer: entry.referrer,
+                                userAgent: entry.userAgent,
+                                country: entry.country,
+                            },
+                        }),
+                        prisma.url.update({
+                            where: { id: urlRecord.id },
+                            data: { clickCount: { increment: 1 } },
+                        }),
+                    ]);
                     console.log(` Processed click for ${entry.shortCode}`);
                 } else {
                     console.log(`URL not found for short code: ${entry.shortCode}`);

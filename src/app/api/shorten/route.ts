@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { url, customAlias, expiry } = parseResult.data;
+    const { url, expiry } = parseResult.data;
 
     const now = Date.now();
     const expiryDate = expiry
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Create Short URL via Service
-    const { shortCode, id, createdAt } = await UrlService.shortenUrl(url, customAlias, expiryDate, userId);
+    const { shortCode, id, createdAt } = await UrlService.shortenUrl(url, expiryDate, userId);
 
     // 4. Return Response
     const baseDomain = process.env.BASE_DOMAIN || 'localhost:3000';
@@ -60,9 +60,7 @@ export async function POST(req: NextRequest) {
   } catch (error: unknown) {
     console.error('Shorten API Error:', error);
 
-    if (error instanceof Error && error.message === 'Custom alias is already in use') {
-      return NextResponse.json({ error: error.message }, { status: 409 });
-    }
+    console.error('Shorten API Error:', error);
 
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }

@@ -6,19 +6,31 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id            Int       @id @default(autoincrement())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  accounts Account[]
+  sessions Session[]
+  urls     Url[]
+}
+
 model Account {
-  id                 String  @id @default(cuid())
-  userId             Int
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            Int
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -30,18 +42,8 @@ model Session {
   sessionToken String   @unique
   userId       Int
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
 
-model User {
-  id            Int       @id @default(autoincrement())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  urls          Url[]
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -53,30 +55,38 @@ model VerificationToken {
 }
 
 model Url {
-  id          Int       @id @default(autoincrement())
-  shortCode   String?   @unique
-  longUrl     String
-  customAlias String?   @unique
-  createdAt   DateTime  @default(now())
-  expiresAt   DateTime?
-  
-  userId      Int?      // Add this to store the User's ID (optional if guests can shorten URLs)
-  user        User?     @relation(fields: [userId], references: [id]) // The relation
+  id         Int    @id @default(autoincrement())
+  shortCode  String @unique
+  longUrl    String
+  clickCount Int    @default(0)
 
-  clicks      ClickAnalytics[]
+  createdAt DateTime  @default(now())
+  expiresAt DateTime?
+
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id])
+
+  clicks ClickAnalytics[]
+
+  @@index([shortCode])
+  @@index([expiresAt])
 }
 
 model ClickAnalytics {
   id        Int      @id @default(autoincrement())
   urlId     Int
-  url       Url      @relation(fields: [urlId], references: [id], onDelete: Cascade)
   shortCode String
   timestamp DateTime @default(now())
+
   ipAddress String?
   referrer  String?
   userAgent String?
   country   String?
 
+  url Url @relation(fields: [urlId], references: [id], onDelete: Cascade)
+
   @@index([shortCode])
   @@index([urlId])
+  @@index([timestamp])
+  @@index([country])
 }

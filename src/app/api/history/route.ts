@@ -18,11 +18,6 @@ export async function GET() {
       where: {
         userId: id,
       },
-      include: {
-        _count: {
-          select: { clicks: true }
-        }
-      },
       orderBy: {
         createdAt: 'desc'
       }
@@ -36,7 +31,7 @@ export async function GET() {
       return {
         ...record,
         shortUrl,
-        clicks: record._count.clicks,
+        clicks: record.clickCount,
       };
     });
 
