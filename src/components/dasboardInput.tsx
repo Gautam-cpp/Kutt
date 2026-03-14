@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { DemoAlert } from './demoAlert';
 import { useSession } from "next-auth/react";
-import { prependToCache } from '@/lib/historyCache';
+import { useHistory } from '@/lib/historyContext';
 
 export function DashboardInput() {
   const [longUrl, setLongUrl] = useState('');
@@ -16,6 +16,7 @@ export function DashboardInput() {
   const isAuth = !!session;
   // @ts-expect-error - id is added in callbacks
   const userId = String(session?.user?.id ?? '');
+  const { prependLink } = useHistory();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +43,7 @@ export function DashboardInput() {
         setShortUrl(data.shortUrl);
         setTimeout(() => setShortUrl(''), 30000);
         if (isAuth && userId && data.id) {
-          prependToCache(userId, {
+          prependLink(userId, {
             id: data.id,
             longUrl,
             shortUrl: data.shortUrl,

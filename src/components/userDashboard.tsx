@@ -2,13 +2,14 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { type UrlRecord, readCache, writeCache } from '@/lib/historyCache';
+import { useHistory } from '@/lib/historyContext';
 
 export function UserDashboard() {
   const { data: session } = useSession();
   // @ts-expect-error - id is added in callbacks
   const userId = String(session?.user?.id ?? '');
 
-  const [history, setHistory] = useState<UrlRecord[]>([]);
+  const { history, setHistory, removeLink } = useHistory();
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState('');
@@ -33,7 +34,7 @@ export function UserDashboard() {
       setLoading(false);
       setSyncing(false);
     }
-  }, [userId]);
+  }, [userId, setHistory]);
 
   useEffect(() => {
     if (!userId) return;
@@ -41,16 +42,18 @@ export function UserDashboard() {
     if (cached) {
       setHistory(cached.data);
       setLoading(false);
-      fetchHistory(true);
+      // Only background-sync if the cache is stale (older than half the TTL)
+      if (cached.stale) {
+        fetchHistory(true);
+      }
     } else {
       fetchHistory(false);
     }
   }, [userId, fetchHistory]);
 
   const handleDelete = async (id: string) => {
-    const updated = history.filter((h) => h.id !== id);
-    setHistory(updated);
-    if (userId) writeCache(userId, updated);
+    // Optimistically remove from context state + cache
+    removeLink(userId, id);
 
     try {
       const res = await fetch(`/api/links/${id}`, {
@@ -58,12 +61,11 @@ export function UserDashboard() {
         credentials: 'include',
       });
       if (!res.ok) {
-        setHistory(history);
-        if (userId) writeCache(userId, history);
+        // Revert on failure by re-fetching
+        fetchHistory(true);
       }
     } catch {
-      setHistory(history);
-      if (userId) writeCache(userId, history);
+      fetchHistory(true);
     }
   };
 

@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import prisma from '../lib';
-import redis from '../lib/redis';
+import prisma from '@/lib';
+import redis from '@/lib/redis';
 
 const CLEANUP_INTERVAL_MS = 1000 * 60 * 60; // Run every hour
 

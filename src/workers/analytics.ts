@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import prisma from '../lib';
-import redis from '../lib/redis';
+import prisma from '@/lib';
+import redis from '@/lib/redis';
 
 async function processAnalyticsTokens() {
     console.log('Starting Analytics Worker...');
